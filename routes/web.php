@@ -37,6 +37,8 @@ Route::middleware(['auth', 'verified', 'practitioner'])->group(function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/book', [AppointmentController::class, 'create'])->name('appointments.create');
     Route::post('/appointments', [AppointmentController::class, 'store'])->name('appointments.store');
+    Route::get('/appointments', [AppointmentController::class, 'index'])->name('appointments.index');
+    Route::patch('/appointments/{appointment}/cancel', [AppointmentController::class, 'cancel'])->name('appointments.cancel');
 });
 
 require __DIR__.'/auth.php';

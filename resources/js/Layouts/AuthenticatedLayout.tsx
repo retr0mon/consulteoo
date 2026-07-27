@@ -51,6 +51,12 @@ export default function Authenticated({
                                         Prendre rendez-vous
                                     </NavLink>
                                 )}
+                                <NavLink
+                                    href={route('appointments.index')}
+                                    active={route().current('appointments.index')}
+                                >
+                                    Mes rendez-vous
+                                </NavLink>
                             </div>
                         </div>
 
@@ -171,6 +177,12 @@ export default function Authenticated({
                                 Prendre rendez-vous
                             </ResponsiveNavLink>
                         )}
+                        <ResponsiveNavLink
+                            href={route('appointments.index')}
+                            active={route().current('appointments.index')}
+                        >
+                            Mes rendez-vous
+                        </ResponsiveNavLink>
                     </div>
 
                     <div className="border-t border-gray-200 pb-1 pt-4">

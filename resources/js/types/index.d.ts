@@ -21,6 +21,14 @@ export interface AvailableSlot extends Slot {
     };
 }
 
+export interface AppointmentRow {
+    id: number;
+    starts_at: string;
+    ends_at: string;
+    status: 'scheduled' | 'cancelled' | 'completed';
+    party: string;
+}
+
 export type PageProps<
     T extends Record<string, unknown> = Record<string, unknown>,
 > = T & {

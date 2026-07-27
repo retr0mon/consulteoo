@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\AppointmentStatus;
+use App\Models\Appointment;
 use App\Models\Slot;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
@@ -73,5 +74,64 @@ class AppointmentController extends Controller
         return $booked
             ? back()->with('success', 'Rendez-vous confirmé !')
             : back()->with('error', "Désolé, ce créneau n'est plus disponible.");
+    }
+
+    /**
+     * Liste les rendez-vous de l'utilisateur (les siens s'il est patient,
+     * ceux reçus sur ses créneaux s'il est praticien).
+     */
+    public function index(Request $request): Response
+    {
+        $user = $request->user();
+        $mode = $user->isPractitioner() ? 'practitioner' : 'patient';
+
+        if ($user->isPractitioner()) {
+            $appointments = Appointment::query()
+                ->whereHas('slot', fn (Builder $query) => $query->where('practitioner_id', $user->id))
+                ->with(['slot', 'patient:id,name'])
+                ->get();
+        } else {
+            $appointments = $user->appointments()
+                ->with(['slot.practitioner:id,name'])
+                ->get();
+        }
+
+        // Format uniforme, trié par date de début du créneau.
+        $data = $appointments
+            ->sortBy(fn (Appointment $appointment) => $appointment->slot->starts_at)
+            ->values()
+            ->map(fn (Appointment $appointment) => [
+                'id' => $appointment->id,
+                'starts_at' => $appointment->slot->starts_at,
+                'ends_at' => $appointment->slot->ends_at,
+                'status' => $appointment->status,
+                'party' => $mode === 'practitioner'
+                    ? $appointment->patient->name
+                    : $appointment->slot->practitioner->name,
+            ]);
+
+        return Inertia::render('Appointments/Index', [
+            'appointments' => $data,
+            'mode' => $mode,
+        ]);
+    }
+
+    /**
+     * Annule un rendez-vous (patient propriétaire uniquement) → relibère le créneau.
+     */
+    public function cancel(Request $request, Appointment $appointment): RedirectResponse
+    {
+        abort_unless($appointment->patient_id === $request->user()->id, 403);
+
+        if (
+            $appointment->status !== AppointmentStatus::Scheduled
+            || $appointment->slot->starts_at->isPast()
+        ) {
+            return back()->with('error', 'Ce rendez-vous ne peut pas être annulé.');
+        }
+
+        $appointment->update(['status' => AppointmentStatus::Cancelled]);
+
+        return back()->with('success', 'Rendez-vous annulé. Le créneau est de nouveau disponible.');
     }
 }
