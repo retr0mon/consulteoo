@@ -2,12 +2,13 @@
 
 namespace Database\Factories;
 
+use App\Models\Slot;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
 
 /**
- * @extends Factory<\App\Models\Slot>
+ * @extends Factory<Slot>
  */
 class SlotFactory extends Factory
 {

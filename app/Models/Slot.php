@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\AppointmentStatus;
+use Database\Factories\SlotFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 #[Fillable(['practitioner_id', 'starts_at', 'ends_at'])]
 class Slot extends Model
 {
-    /** @use HasFactory<\Database\Factories\SlotFactory> */
+    /** @use HasFactory<SlotFactory> */
     use HasFactory;
 
     /**
