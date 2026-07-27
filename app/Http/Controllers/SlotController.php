@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Slot;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -108,5 +109,23 @@ class SlotController extends Controller
         }
 
         return redirect()->route('slots.index')->with('success', $message);
+    }
+
+    /**
+     * Supprime un créneau du praticien connecté.
+     */
+    public function destroy(Request $request, Slot $slot): RedirectResponse
+    {
+        // Le praticien ne peut supprimer que SES créneaux.
+        abort_unless($slot->practitioner_id === $request->user()->id, 403);
+
+        // On refuse de supprimer un créneau déjà réservé (RDV programmé).
+        if (! $slot->isAvailable()) {
+            return back()->with('error', 'Impossible de supprimer un créneau déjà réservé.');
+        }
+
+        $slot->delete();
+
+        return back()->with('success', 'Créneau supprimé.');
     }
 }

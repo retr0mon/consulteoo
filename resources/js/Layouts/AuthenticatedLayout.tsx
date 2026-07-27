@@ -2,6 +2,7 @@ import ApplicationLogo from '@/Components/ApplicationLogo';
 import Dropdown from '@/Components/Dropdown';
 import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
+import { PageProps } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import { PropsWithChildren, ReactNode, useState } from 'react';
 
@@ -9,7 +10,8 @@ export default function Authenticated({
     header,
     children,
 }: PropsWithChildren<{ header?: ReactNode }>) {
-    const user = usePage().props.auth.user;
+    const user = usePage<PageProps>().props.auth.user;
+    const isPractitioner = user.role === 'practitioner';
 
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
@@ -33,6 +35,14 @@ export default function Authenticated({
                                 >
                                     Dashboard
                                 </NavLink>
+                                {isPractitioner && (
+                                    <NavLink
+                                        href={route('slots.index')}
+                                        active={route().current('slots.index')}
+                                    >
+                                        Mes créneaux
+                                    </NavLink>
+                                )}
                             </div>
                         </div>
 
@@ -137,6 +147,14 @@ export default function Authenticated({
                         >
                             Dashboard
                         </ResponsiveNavLink>
+                        {isPractitioner && (
+                            <ResponsiveNavLink
+                                href={route('slots.index')}
+                                active={route().current('slots.index')}
+                            >
+                                Mes créneaux
+                            </ResponsiveNavLink>
+                        )}
                     </div>
 
                     <div className="border-t border-gray-200 pb-1 pt-4">

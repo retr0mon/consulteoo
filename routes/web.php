@@ -29,6 +29,7 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'verified', 'practitioner'])->group(function () {
     Route::get('/slots', [SlotController::class, 'index'])->name('slots.index');
     Route::post('/slots/batch', [SlotController::class, 'storeBatch'])->name('slots.batch');
+    Route::delete('/slots/{slot}', [SlotController::class, 'destroy'])->name('slots.destroy');
 });
 
 require __DIR__.'/auth.php';

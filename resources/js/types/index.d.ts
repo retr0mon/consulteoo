@@ -3,6 +3,7 @@ export interface User {
     name: string;
     email: string;
     email_verified_at?: string;
+    role: 'patient' | 'practitioner';
 }
 
 export interface Slot {
@@ -21,5 +22,6 @@ export type PageProps<
     };
     flash: {
         success?: string | null;
+        error?: string | null;
     };
 };
