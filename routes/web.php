@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SlotController;
 use Illuminate\Foundation\Application;
@@ -30,6 +31,12 @@ Route::middleware(['auth', 'verified', 'practitioner'])->group(function () {
     Route::get('/slots', [SlotController::class, 'index'])->name('slots.index');
     Route::post('/slots/batch', [SlotController::class, 'storeBatch'])->name('slots.batch');
     Route::delete('/slots/{slot}', [SlotController::class, 'destroy'])->name('slots.destroy');
+});
+
+// Espace patient : réservation de créneaux.
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/book', [AppointmentController::class, 'create'])->name('appointments.create');
+    Route::post('/appointments', [AppointmentController::class, 'store'])->name('appointments.store');
 });
 
 require __DIR__.'/auth.php';

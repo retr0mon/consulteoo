@@ -14,6 +14,13 @@ export interface Slot {
     updated_at: string;
 }
 
+export interface AvailableSlot extends Slot {
+    practitioner: {
+        id: number;
+        name: string;
+    };
+}
+
 export type PageProps<
     T extends Record<string, unknown> = Record<string, unknown>,
 > = T & {

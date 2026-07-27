@@ -43,6 +43,14 @@ export default function Authenticated({
                                         Mes créneaux
                                     </NavLink>
                                 )}
+                                {user.role === 'patient' && (
+                                    <NavLink
+                                        href={route('appointments.create')}
+                                        active={route().current('appointments.create')}
+                                    >
+                                        Prendre rendez-vous
+                                    </NavLink>
+                                )}
                             </div>
                         </div>
 
@@ -153,6 +161,14 @@ export default function Authenticated({
                                 active={route().current('slots.index')}
                             >
                                 Mes créneaux
+                            </ResponsiveNavLink>
+                        )}
+                        {user.role === 'patient' && (
+                            <ResponsiveNavLink
+                                href={route('appointments.create')}
+                                active={route().current('appointments.create')}
+                            >
+                                Prendre rendez-vous
                             </ResponsiveNavLink>
                         )}
                     </div>
