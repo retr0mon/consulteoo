@@ -58,4 +58,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(Slot::class, 'practitioner_id');
     }
+
+    /**
+     * Les rendez-vous pris par cet utilisateur (en tant que patient).
+     *
+     * @return HasMany<Appointment, $this>
+     */
+    public function appointments(): HasMany
+    {
+        return $this->hasMany(Appointment::class, 'patient_id');
+    }
 }
