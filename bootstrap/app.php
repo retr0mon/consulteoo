@@ -17,7 +17,10 @@ return Application::configure(basePath: dirname(__DIR__))
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
         ]);
 
-        //
+        // Alias court pour utiliser ->middleware('practitioner') sur les routes.
+        $middleware->alias([
+            'practitioner' => \App\Http\Middleware\EnsureUserIsPractitioner::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
