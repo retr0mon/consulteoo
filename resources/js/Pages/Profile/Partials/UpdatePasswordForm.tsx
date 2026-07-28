@@ -2,6 +2,7 @@ import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
+import { useTranslations } from '@/lib/i18n';
 import { Transition } from '@headlessui/react';
 import { useForm } from '@inertiajs/react';
 import { FormEventHandler, useRef } from 'react';
@@ -11,6 +12,7 @@ export default function UpdatePasswordForm({
 }: {
     className?: string;
 }) {
+    const t = useTranslations();
     const passwordInput = useRef<HTMLInputElement>(null);
     const currentPasswordInput = useRef<HTMLInputElement>(null);
 
@@ -52,12 +54,11 @@ export default function UpdatePasswordForm({
         <section className={className}>
             <header>
                 <h2 className="text-lg font-medium text-gray-900">
-                    Update Password
+                    {t('profile.update_password_title')}
                 </h2>
 
                 <p className="mt-1 text-sm text-gray-600">
-                    Ensure your account is using a long, random password to stay
-                    secure.
+                    {t('profile.update_password_subtitle')}
                 </p>
             </header>
 
@@ -65,7 +66,7 @@ export default function UpdatePasswordForm({
                 <div>
                     <InputLabel
                         htmlFor="current_password"
-                        value="Current Password"
+                        value={t('profile.current_password')}
                     />
 
                     <TextInput
@@ -87,7 +88,10 @@ export default function UpdatePasswordForm({
                 </div>
 
                 <div>
-                    <InputLabel htmlFor="password" value="New Password" />
+                    <InputLabel
+                        htmlFor="password"
+                        value={t('profile.new_password')}
+                    />
 
                     <TextInput
                         id="password"
@@ -105,7 +109,7 @@ export default function UpdatePasswordForm({
                 <div>
                     <InputLabel
                         htmlFor="password_confirmation"
-                        value="Confirm Password"
+                        value={t('common.confirm_password')}
                     />
 
                     <TextInput
@@ -126,7 +130,9 @@ export default function UpdatePasswordForm({
                 </div>
 
                 <div className="flex items-center gap-4">
-                    <PrimaryButton disabled={processing}>Save</PrimaryButton>
+                    <PrimaryButton disabled={processing}>
+                        {t('common.save')}
+                    </PrimaryButton>
 
                     <Transition
                         show={recentlySuccessful}
@@ -136,7 +142,7 @@ export default function UpdatePasswordForm({
                         leaveTo="opacity-0"
                     >
                         <p className="text-sm text-gray-600">
-                            Saved.
+                            {t('common.saved')}
                         </p>
                     </Transition>
                 </div>

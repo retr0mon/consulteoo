@@ -1,24 +1,13 @@
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { useFormats } from '@/lib/format';
+import { useTranslations } from '@/lib/i18n';
 import { PageProps, Slot } from '@/types';
 import { Head, router, useForm, usePage } from '@inertiajs/react';
-import { fr } from 'date-fns/locale';
 import { CSSProperties, FormEventHandler, useEffect, useState } from 'react';
 import { DateRange, DayPicker } from 'react-day-picker';
 import 'react-day-picker/style.css';
-
-const dateFmt = new Intl.DateTimeFormat('fr-FR', {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-    timeZone: 'Europe/Paris',
-});
-const timeFmt = new Intl.DateTimeFormat('fr-FR', {
-    hour: '2-digit',
-    minute: '2-digit',
-    timeZone: 'Europe/Paris',
-});
 
 function pad(n: number): string {
     return String(n).padStart(2, '0');
@@ -39,13 +28,13 @@ for (let h = 8; h <= 19; h++) {
 const DURATIONS = [15, 30, 45, 60];
 
 const WEEKDAYS = [
-    { iso: 1, label: 'Lun' },
-    { iso: 2, label: 'Mar' },
-    { iso: 3, label: 'Mer' },
-    { iso: 4, label: 'Jeu' },
-    { iso: 5, label: 'Ven' },
-    { iso: 6, label: 'Sam' },
-    { iso: 7, label: 'Dim' },
+    { iso: 1, key: 'slots.weekday_mon' },
+    { iso: 2, key: 'slots.weekday_tue' },
+    { iso: 3, key: 'slots.weekday_wed' },
+    { iso: 4, key: 'slots.weekday_thu' },
+    { iso: 5, key: 'slots.weekday_fri' },
+    { iso: 6, key: 'slots.weekday_sat' },
+    { iso: 7, key: 'slots.weekday_sun' },
 ];
 
 const selectClass =
@@ -59,6 +48,8 @@ const calendarStyle = {
 } as CSSProperties;
 
 export default function Index({ slots }: { slots: Slot[] }) {
+    const t = useTranslations();
+    const { formatDate, formatTime, dateFnsLocale } = useFormats();
     const { flash } = usePage<PageProps>().props;
 
     const today = new Date();
@@ -104,7 +95,7 @@ export default function Index({ slots }: { slots: Slot[] }) {
     };
 
     const deleteSlot = (id: number) => {
-        if (confirm('Supprimer ce créneau ?')) {
+        if (confirm(t('slots.delete_confirm'))) {
             router.delete(route('slots.destroy', id), { preserveScroll: true });
         }
     };
@@ -113,11 +104,11 @@ export default function Index({ slots }: { slots: Slot[] }) {
         <AuthenticatedLayout
             header={
                 <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Mes créneaux
+                    {t('slots.title')}
                 </h2>
             }
         >
-            <Head title="Mes créneaux" />
+            <Head title={t('slots.title')} />
 
             <div className="py-10">
                 <div className="mx-auto max-w-3xl space-y-6 px-4 sm:px-6 lg:px-8">
@@ -148,18 +139,17 @@ export default function Index({ slots }: { slots: Slot[] }) {
                     {/* Génération de créneaux */}
                     <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
                         <h3 className="text-base font-semibold text-gray-900">
-                            Générer des créneaux
+                            {t('slots.generate_title')}
                         </h3>
                         <p className="mt-1 text-sm text-gray-500">
-                            Choisissez une période, les jours, une plage horaire et une
-                            durée.
+                            {t('slots.generate_subtitle')}
                         </p>
 
                         <form onSubmit={submit} className="mt-5 sm:flex sm:gap-8">
                             <div className="flex justify-center" style={calendarStyle}>
                                 <DayPicker
                                     mode="range"
-                                    locale={fr}
+                                    locale={dateFnsLocale}
                                     selected={range}
                                     onSelect={setRange}
                                     defaultMonth={today}
@@ -170,7 +160,9 @@ export default function Index({ slots }: { slots: Slot[] }) {
 
                             <div className="mt-6 flex-1 space-y-4 sm:mt-0">
                                 <div>
-                                    <InputLabel value="Jours de la semaine" />
+                                    <InputLabel
+                                        value={t('slots.weekdays_label')}
+                                    />
                                     <div className="mt-1 flex flex-wrap gap-2">
                                         {WEEKDAYS.map((d) => {
                                             const active = data.weekdays.includes(d.iso);
@@ -185,7 +177,7 @@ export default function Index({ slots }: { slots: Slot[] }) {
                                                             : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                                                     }`}
                                                 >
-                                                    {d.label}
+                                                    {t(d.key)}
                                                 </button>
                                             );
                                         })}
@@ -198,7 +190,10 @@ export default function Index({ slots }: { slots: Slot[] }) {
 
                                 <div className="grid grid-cols-2 gap-3">
                                     <div>
-                                        <InputLabel htmlFor="start_time" value="De" />
+                                        <InputLabel
+                                            htmlFor="start_time"
+                                            value={t('slots.from')}
+                                        />
                                         <select
                                             id="start_time"
                                             className={selectClass}
@@ -215,7 +210,10 @@ export default function Index({ slots }: { slots: Slot[] }) {
                                         </select>
                                     </div>
                                     <div>
-                                        <InputLabel htmlFor="end_time" value="À" />
+                                        <InputLabel
+                                            htmlFor="end_time"
+                                            value={t('slots.to')}
+                                        />
                                         <select
                                             id="end_time"
                                             className={selectClass}
@@ -234,7 +232,10 @@ export default function Index({ slots }: { slots: Slot[] }) {
                                 </div>
 
                                 <div>
-                                    <InputLabel htmlFor="duration" value="Durée" />
+                                    <InputLabel
+                                        htmlFor="duration"
+                                        value={t('slots.duration')}
+                                    />
                                     <select
                                         id="duration"
                                         className={selectClass}
@@ -245,7 +246,9 @@ export default function Index({ slots }: { slots: Slot[] }) {
                                     >
                                         {DURATIONS.map((d) => (
                                             <option key={d} value={d}>
-                                                {d} minutes
+                                                {t('slots.duration_minutes', {
+                                                    count: d,
+                                                })}
                                             </option>
                                         ))}
                                     </select>
@@ -260,7 +263,9 @@ export default function Index({ slots }: { slots: Slot[] }) {
                                     disabled={processing || !range?.from}
                                     className="inline-flex w-full items-center justify-center rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                 >
-                                    {processing ? 'Génération…' : 'Générer les créneaux'}
+                                    {processing
+                                        ? t('slots.generating')
+                                        : t('slots.generate_button')}
                                 </button>
                             </div>
                         </form>
@@ -270,7 +275,7 @@ export default function Index({ slots }: { slots: Slot[] }) {
                     <div className="rounded-2xl border border-gray-100 bg-white shadow-sm">
                         <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
                             <h3 className="text-base font-semibold text-gray-900">
-                                Vos créneaux
+                                {t('slots.your_slots')}
                             </h3>
                             <span className="rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-medium text-indigo-700">
                                 {slots.length}
@@ -280,10 +285,10 @@ export default function Index({ slots }: { slots: Slot[] }) {
                         {slots.length === 0 ? (
                             <div className="px-6 py-16 text-center">
                                 <p className="text-sm font-medium text-gray-900">
-                                    Aucun créneau
+                                    {t('slots.no_slots')}
                                 </p>
                                 <p className="mt-1 text-sm text-gray-500">
-                                    Générez vos créneaux ci-dessus.
+                                    {t('slots.no_slots_subtitle')}
                                 </p>
                             </div>
                         ) : (
@@ -295,17 +300,17 @@ export default function Index({ slots }: { slots: Slot[] }) {
                                     >
                                         <div className="flex items-center gap-6">
                                             <span className="font-medium capitalize text-gray-900">
-                                                {dateFmt.format(new Date(slot.starts_at))}
+                                                {formatDate(slot.starts_at)}
                                             </span>
                                             <span className="text-gray-500">
-                                                {timeFmt.format(new Date(slot.starts_at))} –{' '}
-                                                {timeFmt.format(new Date(slot.ends_at))}
+                                                {formatTime(slot.starts_at)} –{' '}
+                                                {formatTime(slot.ends_at)}
                                             </span>
                                         </div>
                                         <button
                                             type="button"
                                             onClick={() => deleteSlot(slot.id)}
-                                            title="Supprimer"
+                                            title={t('slots.delete')}
                                             className="rounded-lg p-1.5 text-gray-400 transition hover:bg-red-50 hover:text-red-600"
                                         >
                                             <svg

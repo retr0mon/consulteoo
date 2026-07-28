@@ -1,7 +1,9 @@
 import ApplicationLogo from '@/Components/ApplicationLogo';
 import Dropdown from '@/Components/Dropdown';
+import LanguageSwitcher from '@/Components/LanguageSwitcher';
 import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
+import { useTranslations } from '@/lib/i18n';
 import { PageProps } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import { PropsWithChildren, ReactNode, useState } from 'react';
@@ -12,6 +14,7 @@ export default function Authenticated({
 }: PropsWithChildren<{ header?: ReactNode }>) {
     const user = usePage<PageProps>().props.auth.user;
     const isPractitioner = user.role === 'practitioner';
+    const t = useTranslations();
 
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
@@ -33,14 +36,14 @@ export default function Authenticated({
                                     href={route('dashboard')}
                                     active={route().current('dashboard')}
                                 >
-                                    Dashboard
+                                    {t('nav.dashboard')}
                                 </NavLink>
                                 {isPractitioner && (
                                     <NavLink
                                         href={route('slots.index')}
                                         active={route().current('slots.index')}
                                     >
-                                        Mes créneaux
+                                        {t('nav.my_slots')}
                                     </NavLink>
                                 )}
                                 {user.role === 'patient' && (
@@ -48,20 +51,21 @@ export default function Authenticated({
                                         href={route('appointments.create')}
                                         active={route().current('appointments.create')}
                                     >
-                                        Prendre rendez-vous
+                                        {t('nav.book')}
                                     </NavLink>
                                 )}
                                 <NavLink
                                     href={route('appointments.index')}
                                     active={route().current('appointments.index')}
                                 >
-                                    Mes rendez-vous
+                                    {t('nav.my_appointments')}
                                 </NavLink>
                             </div>
                         </div>
 
-                        <div className="hidden sm:ms-6 sm:flex sm:items-center">
-                            <div className="relative ms-3">
+                        <div className="hidden sm:ms-6 sm:flex sm:items-center sm:gap-3">
+                            <LanguageSwitcher />
+                            <div className="relative">
                                 <Dropdown>
                                     <Dropdown.Trigger>
                                         <span className="inline-flex rounded-md">
@@ -91,14 +95,14 @@ export default function Authenticated({
                                         <Dropdown.Link
                                             href={route('profile.edit')}
                                         >
-                                            Profile
+                                            {t('nav.profile')}
                                         </Dropdown.Link>
                                         <Dropdown.Link
                                             href={route('logout')}
                                             method="post"
                                             as="button"
                                         >
-                                            Log Out
+                                            {t('nav.logout')}
                                         </Dropdown.Link>
                                     </Dropdown.Content>
                                 </Dropdown>
@@ -159,14 +163,14 @@ export default function Authenticated({
                             href={route('dashboard')}
                             active={route().current('dashboard')}
                         >
-                            Dashboard
+                            {t('nav.dashboard')}
                         </ResponsiveNavLink>
                         {isPractitioner && (
                             <ResponsiveNavLink
                                 href={route('slots.index')}
                                 active={route().current('slots.index')}
                             >
-                                Mes créneaux
+                                {t('nav.my_slots')}
                             </ResponsiveNavLink>
                         )}
                         {user.role === 'patient' && (
@@ -174,14 +178,14 @@ export default function Authenticated({
                                 href={route('appointments.create')}
                                 active={route().current('appointments.create')}
                             >
-                                Prendre rendez-vous
+                                {t('nav.book')}
                             </ResponsiveNavLink>
                         )}
                         <ResponsiveNavLink
                             href={route('appointments.index')}
                             active={route().current('appointments.index')}
                         >
-                            Mes rendez-vous
+                            {t('nav.my_appointments')}
                         </ResponsiveNavLink>
                     </div>
 
@@ -197,15 +201,18 @@ export default function Authenticated({
 
                         <div className="mt-3 space-y-1">
                             <ResponsiveNavLink href={route('profile.edit')}>
-                                Profile
+                                {t('nav.profile')}
                             </ResponsiveNavLink>
                             <ResponsiveNavLink
                                 method="post"
                                 href={route('logout')}
                                 as="button"
                             >
-                                Log Out
+                                {t('nav.logout')}
                             </ResponsiveNavLink>
+                            <div className="px-4 pt-2">
+                                <LanguageSwitcher />
+                            </div>
                         </div>
                     </div>
                 </div>

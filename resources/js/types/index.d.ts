@@ -39,4 +39,6 @@ export type PageProps<
         success?: string | null;
         error?: string | null;
     };
+    locale: string;
+    translations: Record<string, unknown>;
 };

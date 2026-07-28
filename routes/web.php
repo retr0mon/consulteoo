@@ -3,13 +3,26 @@
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SlotController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
     // Pas de page d'accueil publique : on redirige selon l'état de connexion.
-    return redirect()->route(auth()->check() ? 'dashboard' : 'login');
+    return redirect()->route(Auth::check() ? 'dashboard' : 'login');
 });
+
+// Changement de langue (stocké en session) — accessible même déconnecté.
+Route::put('/locale', function (Request $request) {
+    $validated = $request->validate([
+        'locale' => ['required', 'in:fr,en'],
+    ]);
+
+    session(['locale' => $validated['locale']]);
+
+    return back();
+})->name('locale.update');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');

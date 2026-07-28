@@ -1,27 +1,26 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { useFormats } from '@/lib/format';
+import { useTranslations } from '@/lib/i18n';
 import { AppointmentRow, PageProps } from '@/types';
 import { Head, router, usePage } from '@inertiajs/react';
 import { ReactNode, useState } from 'react';
 
-const dateFmt = new Intl.DateTimeFormat('fr-FR', {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-    timeZone: 'Europe/Paris',
-});
-const timeFmt = new Intl.DateTimeFormat('fr-FR', {
-    hour: '2-digit',
-    minute: '2-digit',
-    timeZone: 'Europe/Paris',
-});
-
 const STATUS: Record<
     AppointmentRow['status'],
-    { label: string; className: string }
+    { labelKey: string; className: string }
 > = {
-    scheduled: { label: 'Programmé', className: 'bg-indigo-50 text-indigo-700' },
-    cancelled: { label: 'Annulé', className: 'bg-red-50 text-red-700' },
-    completed: { label: 'Honoré', className: 'bg-emerald-50 text-emerald-700' },
+    scheduled: {
+        labelKey: 'appointments.status_scheduled',
+        className: 'bg-indigo-50 text-indigo-700',
+    },
+    cancelled: {
+        labelKey: 'appointments.status_cancelled',
+        className: 'bg-red-50 text-red-700',
+    },
+    completed: {
+        labelKey: 'appointments.status_completed',
+        className: 'bg-emerald-50 text-emerald-700',
+    },
 };
 
 export default function Index({
@@ -31,6 +30,8 @@ export default function Index({
     appointments: AppointmentRow[];
     mode: 'patient' | 'practitioner';
 }) {
+    const t = useTranslations();
+    const { formatDate, formatTime } = useFormats();
     const { flash } = usePage<PageProps>().props;
     const [cancellingId, setCancellingId] = useState<number | null>(null);
 
@@ -41,10 +42,13 @@ export default function Index({
     const upcoming = appointments.filter(isUpcoming);
     const history = appointments.filter((a) => !isUpcoming(a));
 
-    const partyLabel = mode === 'patient' ? 'Praticien' : 'Patient';
+    const partyLabel =
+        mode === 'patient'
+            ? t('appointments.practitioner')
+            : t('appointments.patient');
 
     const cancel = (id: number) => {
-        if (confirm('Annuler ce rendez-vous ?')) {
+        if (confirm(t('appointments.cancel_confirm'))) {
             setCancellingId(id);
             router.patch(
                 route('appointments.cancel', id),
@@ -64,18 +68,18 @@ export default function Index({
         >
             <div>
                 <p className="text-sm font-medium capitalize text-gray-900">
-                    {dateFmt.format(new Date(a.starts_at))}
+                    {formatDate(a.starts_at)}
                 </p>
                 <p className="text-sm text-gray-500">
-                    {timeFmt.format(new Date(a.starts_at))} –{' '}
-                    {timeFmt.format(new Date(a.ends_at))} · {partyLabel} : {a.party}
+                    {formatTime(a.starts_at)} – {formatTime(a.ends_at)} ·{' '}
+                    {partyLabel} : {a.party}
                 </p>
             </div>
             <div className="flex items-center gap-3">
                 <span
                     className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${STATUS[a.status].className}`}
                 >
-                    {STATUS[a.status].label}
+                    {t(STATUS[a.status].labelKey)}
                 </span>
                 {cancellable && mode === 'patient' && (
                     <button
@@ -84,7 +88,9 @@ export default function Index({
                         disabled={cancellingId === a.id}
                         className="rounded-lg border border-gray-200 px-3 py-1.5 text-sm font-medium text-gray-600 transition hover:border-red-200 hover:bg-red-50 hover:text-red-600 disabled:opacity-50"
                     >
-                        {cancellingId === a.id ? 'Annulation…' : 'Annuler'}
+                        {cancellingId === a.id
+                            ? t('appointments.cancelling')
+                            : t('appointments.cancel')}
                     </button>
                 )}
             </div>
@@ -98,7 +104,7 @@ export default function Index({
             </div>
             {items.length === 0 ? (
                 <p className="px-6 py-10 text-center text-sm text-gray-500">
-                    Rien à afficher.
+                    {t('appointments.nothing')}
                 </p>
             ) : (
                 <ul className="divide-y divide-gray-100">
@@ -112,11 +118,11 @@ export default function Index({
         <AuthenticatedLayout
             header={
                 <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Mes rendez-vous
+                    {t('appointments.title')}
                 </h2>
             }
         >
-            <Head title="Mes rendez-vous" />
+            <Head title={t('appointments.title')} />
 
             <div className="py-10">
                 <div className="mx-auto max-w-3xl space-y-6 px-4 sm:px-6 lg:px-8">
@@ -131,8 +137,8 @@ export default function Index({
                         </div>
                     )}
 
-                    {card('À venir', upcoming, true)}
-                    {card('Historique', history, false)}
+                    {card(t('appointments.upcoming'), upcoming, true)}
+                    {card(t('appointments.history'), history, false)}
                 </div>
             </div>
         </AuthenticatedLayout>

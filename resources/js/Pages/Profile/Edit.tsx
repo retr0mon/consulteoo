@@ -1,4 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { useTranslations } from '@/lib/i18n';
 import { PageProps } from '@/types';
 import { Head } from '@inertiajs/react';
 import DeleteUserForm from './Partials/DeleteUserForm';
@@ -9,15 +10,17 @@ export default function Edit({
     mustVerifyEmail,
     status,
 }: PageProps<{ mustVerifyEmail: boolean; status?: string }>) {
+    const t = useTranslations();
+
     return (
         <AuthenticatedLayout
             header={
                 <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Profile
+                    {t('profile.title')}
                 </h2>
             }
         >
-            <Head title="Profile" />
+            <Head title={t('profile.title')} />
 
             <div className="py-12">
                 <div className="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">

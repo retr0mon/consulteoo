@@ -1,21 +1,13 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { useFormats } from '@/lib/format';
+import { useTranslations } from '@/lib/i18n';
 import { AvailableSlot, PageProps } from '@/types';
 import { Head, router, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 
-const dateFmt = new Intl.DateTimeFormat('fr-FR', {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-    timeZone: 'Europe/Paris',
-});
-const timeFmt = new Intl.DateTimeFormat('fr-FR', {
-    hour: '2-digit',
-    minute: '2-digit',
-    timeZone: 'Europe/Paris',
-});
-
 export default function Book({ slots }: { slots: AvailableSlot[] }) {
+    const t = useTranslations();
+    const { formatDate, formatTime } = useFormats();
     const { flash } = usePage<PageProps>().props;
     const [bookingId, setBookingId] = useState<number | null>(null);
 
@@ -42,11 +34,11 @@ export default function Book({ slots }: { slots: AvailableSlot[] }) {
         <AuthenticatedLayout
             header={
                 <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Prendre rendez-vous
+                    {t('booking.title')}
                 </h2>
             }
         >
-            <Head title="Prendre rendez-vous" />
+            <Head title={t('booking.title')} />
 
             <div className="py-10">
                 <div className="mx-auto max-w-3xl space-y-6 px-4 sm:px-6 lg:px-8">
@@ -64,11 +56,10 @@ export default function Book({ slots }: { slots: AvailableSlot[] }) {
                     {slots.length === 0 ? (
                         <div className="rounded-2xl border border-gray-100 bg-white p-12 text-center shadow-sm">
                             <p className="text-sm font-medium text-gray-900">
-                                Aucun créneau disponible pour le moment.
+                                {t('booking.no_slots')}
                             </p>
                             <p className="mt-1 text-sm text-gray-500">
-                                Revenez plus tard : les praticiens publient
-                                régulièrement de nouvelles disponibilités.
+                                {t('booking.no_slots_subtitle')}
                             </p>
                         </div>
                     ) : (
@@ -79,7 +70,7 @@ export default function Book({ slots }: { slots: AvailableSlot[] }) {
                             >
                                 <div className="border-b border-gray-100 px-6 py-4">
                                     <h3 className="text-base font-semibold capitalize text-gray-900">
-                                        {dateFmt.format(new Date(daySlots[0].starts_at))}
+                                        {formatDate(daySlots[0].starts_at)}
                                     </h3>
                                 </div>
                                 <ul className="divide-y divide-gray-100">
@@ -90,13 +81,8 @@ export default function Book({ slots }: { slots: AvailableSlot[] }) {
                                         >
                                             <div>
                                                 <p className="text-sm font-medium text-gray-900">
-                                                    {timeFmt.format(
-                                                        new Date(slot.starts_at),
-                                                    )}{' '}
-                                                    –{' '}
-                                                    {timeFmt.format(
-                                                        new Date(slot.ends_at),
-                                                    )}
+                                                    {formatTime(slot.starts_at)}{' '}
+                                                    – {formatTime(slot.ends_at)}
                                                 </p>
                                                 <p className="text-sm text-gray-500">
                                                     {slot.practitioner.name}
@@ -109,8 +95,8 @@ export default function Book({ slots }: { slots: AvailableSlot[] }) {
                                                 className="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                             >
                                                 {bookingId === slot.id
-                                                    ? 'Réservation…'
-                                                    : 'Réserver'}
+                                                    ? t('booking.booking')
+                                                    : t('booking.book')}
                                             </button>
                                         </li>
                                     ))}
