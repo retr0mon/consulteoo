@@ -49,7 +49,9 @@ async function shot(page, url, file) {
     await mkdir(path.dirname(dest), { recursive: true });
     await page.goto(`${BASE}${url}`, { waitUntil: 'networkidle0' });
     await new Promise((r) => setTimeout(r, 700)); // laisse le rendu se stabiliser
-    await page.screenshot({ path: dest, fullPage: true });
+    // fullPage: false → on capture uniquement la fenêtre (taille fixe), pas toute
+    // la hauteur scrollable → captures régulières et cadrées.
+    await page.screenshot({ path: dest, fullPage: false });
     console.log(`  ✓ ${file}`);
 }
 
@@ -73,7 +75,7 @@ const browser = await puppeteer.launch({ headless: true });
 
 try {
     const page = await browser.newPage();
-    await page.setViewport({ width: 1280, height: 820, deviceScaleFactor: 2 });
+    await page.setViewport({ width: 1280, height: 860, deviceScaleFactor: 2 });
 
     console.log(`Cible : ${BASE}\n`);
 
