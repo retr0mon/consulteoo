@@ -25,13 +25,11 @@ authentifié — le tout **testé** et **conteneurisé**.
 
 ## 📸 Captures d'écran
 
-<!-- Ajouter les captures dans docs/screenshots/ puis décommenter :
-![Génération de créneaux](docs/screenshots/slots.png)
-![Réservation](docs/screenshots/booking.png)
-![Mes rendez-vous](docs/screenshots/appointments.png)
--->
-
-_À venir._
+| Génération de créneaux — praticien | Réservation — patient |
+|:---:|:---:|
+| ![Génération de créneaux](docs/screenshots/practitioner/slots.png) | ![Réservation](docs/screenshots/patient/book.png) |
+| **Mes rendez-vous — patient** | **Connexion (FR/EN)** |
+| ![Mes rendez-vous](docs/screenshots/patient/appointments.png) | ![Connexion](docs/screenshots/guest/login.png) |
 
 ## 🚀 Fonctionnalités
 
