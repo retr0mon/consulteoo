@@ -1,58 +1,117 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
-
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <img src="public/logo.svg" width="72" alt="Consulteoo" />
 </p>
 
-## About Laravel
+<h1 align="center">Consulteoo</h1>
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+<p align="center">
+  Application de <strong>prise de rendez-vous & téléconsultation</strong> —
+  les praticiens publient leurs créneaux, les patients réservent en ligne.
+</p>
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+<p align="center">
+  <img src="https://github.com/retr0mon/consulteoo/actions/workflows/ci.yml/badge.svg" alt="CI" />
+</p>
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## ✨ Aperçu
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Consulteoo est un projet full-stack qui gère un vrai cas métier de A à Z : gestion des
+disponibilités côté praticien, réservation côté patient, annulation, et un back-office
+authentifié — le tout **testé** et **conteneurisé**.
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+> **Projet personnel de démonstration** (portfolio).
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+## 📸 Captures d'écran
 
-## Agentic Development
+<!-- Ajouter les captures dans docs/screenshots/ puis décommenter :
+![Génération de créneaux](docs/screenshots/slots.png)
+![Réservation](docs/screenshots/booking.png)
+![Mes rendez-vous](docs/screenshots/appointments.png)
+-->
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+_À venir._
+
+## 🚀 Fonctionnalités
+
+- 👥 **Deux rôles** : praticien / patient (accès protégés par middleware)
+- 🗓️ **Génération de créneaux en lot** (période + jours + plage horaire + durée)
+- 🛡️ **Anti-chevauchement** des créneaux (test d'intervalles)
+- 📅 **Réservation** patient avec **protection anti-double-booking** (transaction + verrou)
+- ❌ **Annulation** d'un rendez-vous (qui relibère automatiquement le créneau)
+- 🌍 **Internationalisation** FR / EN (français par défaut), dates & calendrier localisés
+- 🔐 **Authentification** complète (Laravel Breeze)
+
+## 🧱 Stack technique
+
+| Domaine | Technologies |
+|---|---|
+| Back-end | **Laravel 13**, PHP 8.5 |
+| Front-end | **Inertia.js**, **React 18**, **TypeScript**, Tailwind CSS |
+| Base de données | MySQL |
+| Environnement | **Docker** (Laravel Sail) |
+| Tests | **PHPUnit** |
+| Qualité / CI | Laravel Pint, **GitHub Actions** |
+
+## ⚡ Démarrage rapide (Docker)
+
+Prérequis : **Docker Desktop**.
 
 ```bash
-composer require laravel/boost --dev
+# 1. Cloner
+git clone https://github.com/retr0mon/consulteoo.git
+cd consulteoo
 
-php artisan boost:install
+# 2. Installer les dépendances PHP (via un conteneur, sans PHP local)
+docker run --rm -v "$(pwd):/opt" -w /opt laravelsail/php85-composer:latest \
+    composer install --ignore-platform-reqs
+
+# 3. Environnement
+cp .env.example .env
+
+# 4. Lancer les conteneurs (Sail)
+./vendor/bin/sail up -d
+./vendor/bin/sail artisan key:generate
+./vendor/bin/sail artisan migrate --seed
+
+# 5. Front-end
+./vendor/bin/sail npm install
+./vendor/bin/sail npm run dev
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+L'application est alors disponible sur **http://localhost** (le port est configurable via `APP_PORT`).
 
-## Contributing
+### 🔑 Comptes de démonstration
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Le seeder crée deux comptes (mot de passe : `password`) :
 
-## Code of Conduct
+| Rôle | Email |
+|---|---|
+| Praticien | `praticien@consulteoo.test` |
+| Patient | `patient@consulteoo.test` |
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## ✅ Tests
 
-## Security Vulnerabilities
+```bash
+./vendor/bin/sail artisan test
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+La suite couvre les règles métier critiques : autorisations praticien/patient,
+chevauchement de créneaux, anti-double-booking, et annulation qui relibère le créneau.
 
-## License
+## 💡 Choix techniques mis en avant
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- **Anti-double-booking** : la réservation s'exécute dans une **transaction** avec
+  `lockForUpdate()` sur le créneau → deux patients ne peuvent pas réserver le même créneau
+  simultanément (gestion de la *race condition*).
+- **Créneau vs rendez-vous** : deux concepts séparés → un créneau annulé conserve son
+  historique et redevient réservable (disponibilité **déduite**, non dénormalisée).
+- **Internationalisation** : textes via un dictionnaire (`lang/*.json`) partagé par Inertia +
+  formatage des dates/calendrier selon la langue (API `Intl` / `date-fns`).
+- **CI** : à chaque push, GitHub Actions vérifie le style (Pint) et lance les tests sur un
+  MySQL de service.
+
+---
+
+<p align="center"><sub>Construit avec Laravel, Inertia & React.</sub></p>
