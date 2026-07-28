@@ -3,17 +3,12 @@
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SlotController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
+    // Pas de page d'accueil publique : on redirige selon l'état de connexion.
+    return redirect()->route(auth()->check() ? 'dashboard' : 'login');
 });
 
 Route::get('/dashboard', function () {
